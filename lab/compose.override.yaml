@@ -1,0 +1,31 @@
+services:
+  db:
+    environment:
+      POSTGRES_PASSWORD: ${PAPERLESS_DB_PASSWORD:?set PAPERLESS_DB_PASSWORD}
+
+  webserver:
+    ports: !override
+      - "127.0.0.1:${PAPERLESS_UI_PORT:-8000}:8000"
+    environment:
+      PAPERLESS_DBPASS: ${PAPERLESS_DB_PASSWORD:?set PAPERLESS_DB_PASSWORD}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY:?set PAPERLESS_SECRET_KEY}
+      PAPERLESS_TIME_ZONE: ${PAPERLESS_TIME_ZONE:-UTC}
+      PAPERLESS_OCR_LANGUAGE: ${PAPERLESS_OCR_LANGUAGE:-pol}
+      PAPERLESS_OCR_LANGUAGES: ${PAPERLESS_OCR_LANGUAGES:-pol}
+      PAPERLESS_CONSUMER_DELETE_DUPLICATES: ${PAPERLESS_CONSUMER_DELETE_DUPLICATES:-false}
+
+  core_fixture_db:
+    image: docker.io/library/postgres:18@sha256:3a82e1f56c8f0f5616a11103ac3d47e632c3938698946a7ad26da0df1334744a
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: core_fixture
+      POSTGRES_USER: core_fixture
+      POSTGRES_PASSWORD: ${CORE_FIXTURE_DB_PASSWORD:?set CORE_FIXTURE_DB_PASSWORD}
+    volumes:
+      - corefixturepgdata:/var/lib/postgresql
+      - ./fixture/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+      - corefixtureassets:/srv/core-assets
+
+volumes:
+  corefixturepgdata:
+  corefixtureassets:

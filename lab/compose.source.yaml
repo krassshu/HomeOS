@@ -1,0 +1,25 @@
+name: homeos-m3-source
+
+services:
+  webserver:
+    volumes: !override
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+      - ../lab-data/m3-source/export:/usr/src/paperless/export
+      - ../lab-data/m3-source/consume:/usr/src/paperless/consume
+
+volumes:
+  data:
+    name: homeos-m3-source-paperless-data
+  media:
+    name: homeos-m3-source-paperless-media
+  pgdata:
+    name: homeos-m3-source-paperless-postgres
+  redisdata:
+    name: homeos-m3-source-paperless-valkey
+  corefixturepgdata:
+    name: homeos-m3-source-core-postgres
+  corefixtureassets:
+    name: homeos-m3-source-core-assets
+  corevalkeydata:
+    name: homeos-m3-source-core-valkey

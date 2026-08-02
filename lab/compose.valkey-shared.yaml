@@ -1,0 +1,4 @@
+services:
+  broker:
+    ports:
+      - "127.0.0.1:${VALKEY_SHARED_PORT:-16379}:6379"

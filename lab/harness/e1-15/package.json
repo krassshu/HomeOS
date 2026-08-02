@@ -1,0 +1,12 @@
+{
+  "name": "homeos-e1-15-bullmq-harness",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "bullmq": "5.81.2",
+    "pg": "8.22.0"
+  }
+}

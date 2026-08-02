@@ -1,0 +1,74 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../node_modules/.generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model HomeObject {
+  id           String                 @id
+  kind         String
+  title        String
+  version      Int                    @default(1)
+  searchVector Unsupported("tsvector")? @map("search_vector")
+  createdAt    DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime               @default(now()) @map("updated_at") @db.Timestamptz(6)
+  fieldValues  ObjectFieldValue[]
+  objectTags   ObjectTag[]
+  auditEntries AuditEntry[]
+
+  @@map("objects")
+}
+
+model FieldDefinition {
+  id          String             @id
+  key         String             @unique(map: "field_definitions_key_idx")
+  valueType   String             @map("value_type")
+  fieldValues ObjectFieldValue[]
+
+  @@map("field_definitions")
+}
+
+model ObjectFieldValue {
+  objectId     String          @map("object_id")
+  definitionId String          @map("definition_id")
+  value        Json
+  object       HomeObject      @relation(fields: [objectId], references: [id], onDelete: Cascade)
+  definition   FieldDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+
+  @@id([objectId, definitionId], map: "object_field_values_pk")
+  @@map("object_field_values")
+}
+
+model Tag {
+  id         String      @id
+  name       String      @unique(map: "tags_name_idx")
+  objectTags ObjectTag[]
+
+  @@map("tags")
+}
+
+model ObjectTag {
+  objectId String     @map("object_id")
+  tagId    String     @map("tag_id")
+  object   HomeObject @relation(fields: [objectId], references: [id], onDelete: Cascade)
+  tag      Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([objectId, tagId], map: "object_tags_pk")
+  @@map("object_tags")
+}
+
+model AuditEntry {
+  id        Int        @id @default(autoincrement())
+  objectId  String     @map("object_id")
+  action    String
+  diff      Json
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  object    HomeObject @relation(fields: [objectId], references: [id], onDelete: Cascade)
+
+  @@map("audit_entries")
+}

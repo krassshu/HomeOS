@@ -1,0 +1,52 @@
+# Operating system and IDE files
+.DS_Store
+.idea/
+.vscode/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+!*.env.example
+*.key
+*.pem
+*.token
+secrets/
+keys/
+
+# Laboratory inputs and private outputs
+lab-data/
+Docs/operations/spike-results/private/
+Docs/operations/spike-results/raw/
+Docs/operations/spike-results/**/*.private.*
+Docs/operations/spike-results/**/*.secret.*
+
+# Backup repositories and exports
+restic-repository/
+borg-repository/
+backup-repositories/
+exports/
+restore-targets/
+
+# Runtime data
+data/
+consume/
+media/
+tmp/
+*.dump
+*.sql.gz
+
+# JavaScript tooling used by disposable laboratory harnesses
+node_modules/
+.pnpm-store/
+dist/
+coverage/
+*.tsbuildinfo
+.eslintcache
+.turbo/
+.next/
+lab/e2/prisma/generated/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -1,0 +1,11 @@
+services:
+  core_broker:
+    image: docker.io/valkey/valkey:9-alpine@sha256:ee91f7a174ac4d6a6b0685b3a60e321f0a9dbbb691f9b0e285be2ba1d1be8328
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${VALKEY_CORE_PORT:-16380}:6379"
+    volumes:
+      - corevalkeydata:/data
+
+volumes:
+  corevalkeydata:

@@ -1,0 +1,8 @@
+Docs/
+lab/
+lab-data/
+node_modules/
+dist/
+coverage/
+pnpm-lock.yaml
+*.md
