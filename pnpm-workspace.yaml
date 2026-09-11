@@ -2,6 +2,19 @@ packages:
   - apps/*
   - packages/*
 
+# Ustawienia pnpm żyją tutaj; pnpm 11 nie czyta ich z .npmrc (tam zostaje tylko registry).
+autoInstallPeers: false
+strictPeerDependencies: true
+saveExact: true
+engineStrict: true
+verifyStoreIntegrity: true
+
+# React i react-dom to peery Prisma Studio wewnątrz prisma CLI; API ich nie używa.
+peerDependencyRules:
+  ignoreMissing:
+    - react
+    - react-dom
+
 # Skrypty instalacyjne uruchamiają tylko pakiety Prisma (pobranie schema engine dla CLI).
 allowBuilds:
   '@prisma/engines': true

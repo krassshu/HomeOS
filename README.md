@@ -131,10 +131,14 @@ po domknięciu M4. To świadoma granica, nie brak.
 
 ## Polityka zależności i CI
 
-- Wersje dokładne (`check:deps`), jeden `pnpm-lock.yaml`, `allowBuilds` tylko
-  dla Prismy, `overrides` dla podatnych zależności przechodnich
-  (`pnpm-workspace.yaml`). `check:compose` sprawdza, że oba pliki Compose mają
-  obrazy z digestem i porty tylko na `127.0.0.1`.
+- Ustawienia pnpm są w `pnpm-workspace.yaml` (pnpm 11 nie czyta ich z
+  `.npmrc`, gdzie zostaje tylko rejestr): `autoInstallPeers: false`,
+  `strictPeerDependencies: true`, `saveExact`, `engineStrict`,
+  `verifyStoreIntegrity`, `allowBuilds` tylko dla Prismy, `overrides` dla
+  podatnych zależności przechodnich oraz `peerDependencyRules.ignoreMissing`
+  dla `react`/`react-dom` (peery Prisma Studio wewnątrz CLI, nieużywane).
+  Wersje dokładne sprawdza `check:deps`; `check:compose` sprawdza, że oba
+  pliki Compose mają obrazy z digestem i porty tylko na `127.0.0.1`.
 - `pnpm audit --prod --audit-level=high` przechodzi. Ignorowany
   `GHSA-ggr8-5vv4-36mx` (deepmerge-ts w Prisma CLI): CLI to devDependency,
   ale trafia do `node_modules/.pnpm` obrazu jako peer `@prisma/client`; nie jest
@@ -147,7 +151,11 @@ po domknięciu M4. To świadoma granica, nie brak.
   `USER node`, runtime bez pnpm i CLI, HEALTHCHECK na `/health/live`, `exec`
   CMD (SIGTERM trafia do node), `.dockerignore` jako allowlist. Znany
   kompromis: `pnpm install --prod` kopiuje do `node_modules/.pnpm` także
-  nieużywany pakiet `prisma` CLI (peer w lockfile), więc obraz jest większy.
+  nieużywany pakiet `prisma` CLI, bo pnpm wiąże opcjonalnego peera `prisma`
+  z instancją `@prisma/client` (sprawdzono: przeniesienie CLI do roota,
+  `resolvePeersFromWorkspaceRoot: false`, `overrides` i `pnpm deploy --prod`
+  tego nie zmieniają). CLI nie ma w runtime pliku wykonywalnego ani linku z
+  `apps/api/node_modules`; obraz ma ok. 780 MB.
 - CI (`.github/workflows/ci.yml`): push na `main` i PR, `contents: read`,
   akcje przypięte pełnym SHA; kroki: install, prisma validate/generate,
   check:deps, check:tracked, check:secrets, docs:check, lint, typecheck,

@@ -4,6 +4,30 @@ Format: `[data] — zakres — opis`
 
 ---
 
+## [2026-09-11] — porządki po pierwszym wycinku M9: konfiguracja pnpm
+
+### Zmienione
+
+- Ustawienia pnpm przeniesione z `.npmrc` (którego pnpm 11 nie czyta poza
+  rejestrem) do `pnpm-workspace.yaml`: `autoInstallPeers: false`,
+  `strictPeerDependencies: true`, `saveExact`, `engineStrict`,
+  `verifyStoreIntegrity`. Lockfile zapisuje teraz `autoInstallPeers: false`;
+  automatycznie doinstalowane `react`/`react-dom` (peery Prisma Studio)
+  zniknęły z grafu i z obrazu runtime (792 MB → 781 MB).
+- `peerDependencyRules.ignoreMissing` dla `react`/`react-dom`: jedyne
+  brakujące peery pochodzą z Prisma Studio w `prisma` CLI, którego API nie
+  używa.
+
+### Doprecyzowane
+
+- Prisma CLI nadal trafia do `node_modules/.pnpm` obrazu jako peer
+  `@prisma/client` (bez pliku wykonywalnego i bez linku); oficjalne mechanizmy
+  pnpm tego nie zmieniają, więc optymalizacja nie jest uznana za wykonaną.
+- Pierwszy wycinek M9 pozostaje zweryfikowany, M9 jako milestone otwarte,
+  M10 nierozpoczęte, M4 nadal `draft`.
+
+---
+
 ## [2026-09-11] — M9 Engineering Foundation: pierwszy wycinek zweryfikowany
 
 ### Dodane
