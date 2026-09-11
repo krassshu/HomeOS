@@ -122,7 +122,10 @@ describe('SafeExceptionFilter', () => {
 
   it('replaces the body of an HttpException with status 500 and logs it', () => {
     filter.catch(
-      new HttpException({ statusCode: 500, error: 'boom postgresql://user:example-password@db.internal/db' }, 500),
+      new HttpException(
+        { statusCode: 500, error: 'boom postgresql://user:example-password@db.internal/db' },
+        500,
+      ),
       createHost(response),
     );
 
