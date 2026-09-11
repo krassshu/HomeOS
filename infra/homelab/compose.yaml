@@ -1,0 +1,93 @@
+name: homeintelcore-dev
+
+services:
+  core-db:
+    image: docker.io/library/postgres:18@sha256:3a82e1f56c8f0f5616a11103ac3d47e632c3938698946a7ad26da0df1334744a
+    environment:
+      POSTGRES_DB: ${HOMEINTELCORE_DB_NAME:?Brak HOMEINTELCORE_DB_NAME w infra/homelab/.env}
+      POSTGRES_USER: ${HOMEINTELCORE_DB_USER:?Brak HOMEINTELCORE_DB_USER w infra/homelab/.env}
+      POSTGRES_PASSWORD: ${HOMEINTELCORE_DB_PASSWORD:?Brak HOMEINTELCORE_DB_PASSWORD w infra/homelab/.env}
+    # brak ports: baza jest dostępna tylko dla api w sieci homeintelcore-dev
+    volumes:
+      # postgres:18 trzyma dane w /var/lib/postgresql, nie w /var/lib/postgresql/data
+      - core-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    # bez cap_drop ALL: obraz postgres potrzebuje capabilities do inicjalizacji
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+
+  api:
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+    # obraz budowany lokalnie na VM, nie publikowany
+    image: homeintelcore-api:dev
+    ports:
+      - '127.0.0.1:3100:3000'
+    environment:
+      # HOST 0.0.0.0 dotyczy wnętrza kontenera; na hoście port jest tylko na loopback
+      HOST: 0.0.0.0
+      PORT: 3000
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      READINESS_TIMEOUT_MS: 2000
+      SHUTDOWN_TIMEOUT_MS: 10000
+      DATABASE_URL: postgresql://${HOMEINTELCORE_DB_USER}:${HOMEINTELCORE_DB_PASSWORD}@core-db:5432/${HOMEINTELCORE_DB_NAME}
+    depends_on:
+      core-db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/api/v1/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    stop_grace_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+networks:
+  # osobny bridge; żadnego połączenia z siecią laboratorium M3
+  default:
+    name: homeintelcore-dev
+
+volumes:
+  core-db-data:
+    name: homeintelcore-dev-core-db-data

@@ -1,0 +1,28 @@
+name: homeintelcore-local
+
+services:
+  core-db:
+    image: docker.io/library/postgres:18@sha256:3a82e1f56c8f0f5616a11103ac3d47e632c3938698946a7ad26da0df1334744a
+    environment:
+      POSTGRES_DB: ${HOMEINTELCORE_DB_NAME:?Brak HOMEINTELCORE_DB_NAME w .env (uruchom pnpm dev:setup)}
+      POSTGRES_USER: ${HOMEINTELCORE_DB_USER:?Brak HOMEINTELCORE_DB_USER w .env (uruchom pnpm dev:setup)}
+      POSTGRES_PASSWORD: ${HOMEINTELCORE_DB_PASSWORD:?Brak HOMEINTELCORE_DB_PASSWORD w .env (uruchom pnpm dev:setup)}
+    ports:
+      - '127.0.0.1:${HOMEINTELCORE_DB_PORT:-55432}:5432'
+    volumes:
+      # postgres:18 trzyma dane w /var/lib/postgresql, nie w /var/lib/postgresql/data
+      - core-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    # lokalna baza nie ma startować sama po restarcie laptopa
+    restart: 'no'
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  core-db-data:
+    name: homeintelcore-local-core-db-data

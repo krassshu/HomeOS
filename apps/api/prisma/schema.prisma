@@ -1,0 +1,14 @@
+// Szkielet Prisma dla HomeIntelCore Core. Modele domenowe powstaną dopiero po
+// domknięciu M4 (Docs/10-Conceptual-Data-Model.md ma status draft).
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/infrastructure/persistence/generated"
+  runtime             = "nodejs"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}

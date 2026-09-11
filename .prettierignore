@@ -6,3 +6,5 @@ dist/
 coverage/
 pnpm-lock.yaml
 *.md
+apps/api/src/infrastructure/persistence/generated/
+sbom/

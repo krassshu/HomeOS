@@ -4,6 +4,99 @@ Format: `[data] — zakres — opis`
 
 ---
 
+## [2026-09-11] — M9 Engineering Foundation: pierwszy wycinek zweryfikowany
+
+### Dodane
+
+- Lokalny Core PostgreSQL 18 w Dockerze: `infra/dev/compose.yaml` (projekt
+  `homeintelcore-local`, port tylko `127.0.0.1:55432`, nazwany wolumen,
+  healthcheck), `.env.example` oraz `pnpm dev:setup` tworzący ignorowany `.env`
+  z losowym hasłem. Skrypty `db:config/up/ps/logs/sql/stop/down` i jawnie
+  potwierdzany, nieodwracalny `db:reset`.
+- Prisma 7.9.1 z oficjalnym adapterem `pg` jako zależność `apps/api`:
+  `schema.prisma` tylko z generatorem i datasource (zero modeli),
+  `prisma.config.ts` działający bez bazy, `PrismaService` z leniwym
+  połączeniem i `$disconnect` przy zamknięciu. Prisma importowana wyłącznie w
+  `infrastructure/persistence`.
+- Core API: typowana walidacja konfiguracji przed startem, logowanie pino JSON
+  z redakcją hasła w URL, `x-correlation-id`, filtr wyjątków bez wycieku
+  szczegółów, `GET /api/v1/health/ready` (200/503 przez port
+  `DATABASE_PROBE`, bez URL, hasła i stack trace), łagodne zamknięcie na
+  SIGTERM/SIGINT.
+- Testy: 63 jednostkowe i 12 integracyjnych (Testcontainers z prawdziwym
+  PostgreSQL 18: readiness, correlation id, uuidv7, shutdown procesu
+  `dist/main.js`). `pnpm test` uruchamia oba zestawy.
+- `apps/api/Dockerfile` (wieloetapowy, `node:24.18.0-bookworm-slim` z
+  digestem, `USER node`, HEALTHCHECK, `exec` CMD), `.dockerignore` jako
+  allowlist, `pnpm docker:build` bez publikacji obrazu.
+- Polityka zależności: `check:deps` (wersje dokładne), `check:tracked`,
+  `check:secrets` (gitleaks w Dockerze), `check:compose` (digesty i porty
+  loopback w Compose), `overrides` i `auditConfig` w
+  `pnpm-workspace.yaml`, `pnpm sbom:generate` (wbudowane `pnpm sbom`,
+  CycloneDX; wynik nie jest commitowany).
+- Workflow CI `.github/workflows/ci.yml`: akcje przypięte SHA, pełny łańcuch
+  kontroli, testy integracyjne na Dockerze runnera, SBOM jako artefakt z
+  retencją 30 dni. Workflow jest zdefiniowany; pierwsze uruchomienie nastąpi
+  po pierwszym pushu.
+- `infra/homelab`: izolowany Compose `homeintelcore-dev` do testu M9 na VM
+  (API tylko `127.0.0.1:3100`, baza bez portu hosta, osobna sieć i wolumen,
+  hardening kontenera API), z procedurą w `infra/homelab/README.md`.
+- Rejestr rozbieżności: **R-21** — `infra/` zamiast `deploy/` z 03 §23.
+- Glossary: hasło **HomeIntelCore** / **HomeOS** (nazwa historyczna).
+
+### Zmienione
+
+- Nazwa produktu: **HomeIntelCore**, nazwa techniczna `homeintelcore` (root
+  package, `@homeintelcore/api`, `service: "homeintelcore-api"`). HomeOS
+  pozostaje w identyfikatorach laboratorium M3, nazwie repozytorium GitHub i
+  wpisach historycznych.
+- Główny `README.md` przepisany jako pełna ścieżka świeżego developera
+  (każde polecenie istnieje w root `package.json`) z sekcją „Czego tu nie ma”.
+- `Docs/README.md` §6: zastąpiono zdanie o braku kodu produkcyjnego opisem
+  stanu M9 — fundament inżynieryjny powstał świadomie przed zamknięciem bram
+  M3/M4 zgodnie z 07 §14, kod domenowy (M10) nadal czeka na M4–M8.
+- Runbook M9: nota „Rozszerzenie zakresu 2026-09-11” (CI, Dockerfile, Compose
+  homelab, commit i push) bez zmiany pozostałej treści i statusu.
+- Korekta liczby ADR w `Docs/README.md`: indeks obejmuje 20 ADR-ów
+  (`ADR-001` … `ADR-020`) — 16 × `accepted`, 3 × `proposed`,
+  1 × `deprecated` — zgodnie z `adr/09-Architecture-Decisions-Index.md`.
+  Korekta niezależna od M9.
+
+### Doprecyzowane
+
+- M4 (`10-Conceptual-Data-Model.md`) pozostaje `draft`; nie ma tabel, modeli
+  ani migracji domenowych (`prisma/migrations` nie istnieje).
+- M9 nie jest zamknięty: brakuje branch/release policy poza notą, migracji
+  domenowych i pełnego katalogu health z 04 §21. Ten wycinek nie oznacza
+  gotowego produktu.
+- M3 pozostaje osobnym laboratorium (Gate OS-1 i ADR-015 nadal otwarte);
+  Paperless nie jest połączony z Core.
+- WireGuard (ADR-020) jest planowany, nie skonfigurowany. M10 nie jest
+  rozpoczęte: brak logowania, sesji, ról, CRUD i frontendu.
+- Testcontainers i gitleaks to narzędzia developerskie, nie komponenty
+  produktu. Wdrożenie homelab jest testem izolowanym, nie produkcją.
+
+---
+
+## [2026-09-09] — runbook PostgreSQL i Prisma dla CC
+
+### Dodane
+
+- Kompletny plan wykonawczy pierwszego wycinka M9 dla koordynatora Fable i
+  agentów Fable/Opus 5: lokalny PostgreSQL 18, Prisma 7.9.1, konfiguracja,
+  readiness, test z prawdziwą bazą, dokumentacja i niezależny review.
+- Jawny podział własności plików i zakaz równoległych zmian lockfile podczas
+  pracy wielu agentów.
+- Kryteria akceptacji, reguły ochrony sekretów i danych Dockera, warunki
+  eskalacji oraz format końcowego raportu opartego na wykonanych testach.
+
+### Doprecyzowane
+
+- Ten techniczny wycinek nie tworzy tabel ani migracji domenowych i nie zamyka
+  M4 ani całego M9. Model pojęciowy M4 nadal pozostaje szkicem.
+
+---
+
 ## [2026-08-02] — rozpoczęcie M9: Engineering Foundation
 
 ### Dodane

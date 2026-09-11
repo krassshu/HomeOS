@@ -2,7 +2,7 @@
 
 **Status:** `accepted` · **Milestone:** M0 · **Data:** 2026-07-27
 
-> Trwały zapis 20 rozbieżności wykrytych między dokumentami 01–04 a 05–07 oraz ich rozstrzygnięć.
+> Trwały zapis 21 rozbieżności wykrytych między dokumentami 01–04 a 05–07 oraz ich rozstrzygnięć.
 >
 > **Zasada:** nie tworzymy kompromisów. Wskazujemy decyzję obowiązującą i oznaczamy poprzednią jako zastąpioną.
 >
@@ -46,6 +46,7 @@ Dokumenty **01–04** pozostają źródłem prawdy w zakresie: wizji produktu, c
 | **R-18** | Zakres monitoringu | **Rozbudowany etap 1 i 2** — 04 §31 | **Etap 1 wystarcza dla MVP** — 05 §4, §17; 07 §24 | **05, 07** | **W MVP: health endpoint, structured logs, alert miejsca, alert backupu, stan kolejki.** Pełny stack metryk po wejściu realnych danych. Ryzyko „zbyt ciężkiego monitoringu" jest jawne | — |
 | **R-19** | Statusy dokumentu | **8 stanów** — 03 §13.2 | **14 stanów** — 06 §12 | **06** | **Obowiązuje 14-stanowa state machine z 06 §12.** Dodane: `uploading`, `validating`, `quarantined_security`, `queued`, `trashed`; `failed` rozbite na `failed_retryable` i `failed_permanent`. Każda zmiana stanu walidowana przez state machine, nie przez zapis pola | ADR-017 |
 | **R-20** | Odczyt statusu przetwarzania | „Polling na start, później SSE" — 03 §22 | „Polling lub SSE" — 06 §11.7 | **06** (zgodne z 03) | **Brak realnej sprzeczności.** Obowiązuje **polling w MVP**, SSE jako ulepszenie, WebSocket wyłącznie po udowodnionej potrzebie. Do zapisania w `14-API-Specification.md` (M8) | — |
+| **R-21** | Katalog konfiguracji uruchomieniowych | **`deploy/`** w strukturze monorepo — 03 §23 | **`infra/`** — `infra/dev` narzucony przez runbook M9 (`operations/M9-PostgreSQL-Prisma-CC-Runbook.md`), `infra/homelab` dodany 2026-09-11 | **runbook M9** (07 §14 nie określa nazwy) | **Obowiązuje `infra/`** jako katalog konfiguracji uruchomieniowych (dev, homelab) w monorepo. `deploy/` z 03 §23 nie powstaje. Zmiana jest kosmetyczna i odwracalna, więc nie wymaga ADR; 03 §23 jest szkicem struktury, nie decyzją | — |
 
 ---
 

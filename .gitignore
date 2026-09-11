@@ -50,3 +50,7 @@ npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Wygenerowany klient Prisma i lokalne artefakty supply chain
+apps/api/src/infrastructure/persistence/generated/
+sbom/

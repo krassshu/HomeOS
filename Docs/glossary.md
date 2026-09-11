@@ -68,6 +68,7 @@ Cztery pojęcia były używane niejednoznacznie w dokumentach 01–07. Rozstrzyg
 
 | Pojęcie | Definicja | Źródło |
 |---|---|---|
+| **HomeIntelCore** | Nazwa produktu i nazwa techniczna `homeintelcore` (root package, workspace `@homeintelcore/api`, `service: "homeintelcore-api"`, projekty Compose `homeintelcore-*`). **HomeOS** to historyczna nazwa robocza, zachowana w identyfikatorach laboratorium M3 (`homeos-m3-source`, `/srv/homeos`, `lab/`), w nazwie repozytorium GitHub i w treściach historycznych; nie zastępujemy jej wstecznie. | `README.md`, `CHANGELOG.md` 2026-09-11 |
 | **DocumentProvider** | Port aplikacyjny Core opisujący 10 operacji REST: `ingest`, task status, metadata, original stream, preview stream, thumbnail, search, update mapped metadata, trash/delete, health. **Nie zawiera eksportu/importu. Definiowany przed adapterem** (M6 przed M11). | 03 §8, 05 §2.4, 07 §11, ADR-019 |
 | **PaperlessAdapter** | Jedyna produkcyjna implementacja portu `DocumentProvider`. **Jedyne miejsce w systemie znające typy i URL-e Paperless.** | 07 §16 |
 | **FakeDocumentProvider** | Implementacja portu na potrzeby testów i pracy równoległej nad pipeline'em uploadu. | 07 §16 |

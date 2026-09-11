@@ -1,0 +1,7 @@
+# Konfiguracja tylko dla skanu drzewa roboczego (dir). Lokalny .env jest ignorowany przez Git
+# i celowo zawiera wygenerowane hasło; jego commit blokuje osobno scripts/check-tracked-files.mjs.
+[extend]
+useDefault = true
+
+[[allowlists]]
+paths = ['''(^|/)\.env$''']

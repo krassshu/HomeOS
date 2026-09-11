@@ -1,6 +1,6 @@
-# HomeOS — Dokumentacja projektu
+# HomeIntelCore (dawniej HomeOS) — Dokumentacja projektu
 
-**Repozytorium dokumentacji** · M0–M2 zamknięte · M3 w toku · M4 w szkicu · Ostatnia aktualizacja: 2026-08-01
+**Repozytorium dokumentacji** · M0–M2 zamknięte · M3 w toku · M4 w szkicu · M9 foundation: pierwszy wycinek zweryfikowany · Ostatnia aktualizacja: 2026-09-11
 
 Domowy segregator: lokalna, samodzielnie hostowana platforma, w której obiekty (osoby, rzeczy, miejsca, usługi) są opisane dynamicznymi polami, połączone relacjami i wzbogacone o dokumenty z automatycznym OCR.
 
@@ -42,7 +42,7 @@ W razie sprzeczności najpierw ustala się obszar decyzji, a następnie właści
 |---|---|---|
 | [`03-Technology-Architecture.md`](architecture/03-Technology-Architecture.md) | Stos technologiczny, granice własnego kodu, integracja z Paperless | `accepted z wyjątkami` |
 | [`05-Open-Source-Architecture.md`](architecture/05-Open-Source-Architecture.md) | Komponenty OSS, właściciele danych, porty, licencje, bramy OS-1…OS-4 | `accepted` |
-| [`discrepancy-register.md`](architecture/discrepancy-register.md) | Rejestr 20 rozbieżności i rozstrzygnięć | `accepted` |
+| [`discrepancy-register.md`](architecture/discrepancy-register.md) | Rejestr 21 rozbieżności i rozstrzygnięć | `accepted` |
 
 ### `domain/`
 
@@ -65,14 +65,15 @@ W razie sprzeczności najpierw ustala się obszar decyzji, a następnie właści
 | [`spike-plan.md`](operations/spike-plan.md) | Plan wykonawczy Fazy 1 — E1, E2, E3A (przenośność) i E3B (DR) | `accepted` |
 | [`lab-manifest.md`](operations/lab-manifest.md) | Baseline Paperless 3.0.4, digesty i wymagania środowiska laboratoryjnego | `accepted — konfiguracja zweryfikowana statycznie` |
 | [`spike-data-policy.md`](operations/spike-data-policy.md) | Zasady ochrony dokumentów testowych, sekretów i artefaktów | `accepted` |
+| [`M9-PostgreSQL-Prisma-CC-Runbook.md`](operations/M9-PostgreSQL-Prisma-CC-Runbook.md) | Wykonawczy runbook CC dla lokalnego PostgreSQL 18, Prisma, readiness i testów pierwszego wycinka M9 | `accepted for execution` |
 
 ### `adr/`
 
 | Dokument | Rola | Status |
 |---|---|---|
-| [`09-Architecture-Decisions-Index.md`](adr/09-Architecture-Decisions-Index.md) | Indeks 19 ADR-ów ze statusami | `accepted` |
+| [`09-Architecture-Decisions-Index.md`](adr/09-Architecture-Decisions-Index.md) | Indeks 20 ADR-ów ze statusami | `accepted` |
 | [`ADR-TEMPLATE.md`](adr/ADR-TEMPLATE.md) | Obowiązujący szablon ADR | `accepted` |
-| `ADR-001` … `ADR-019` | Decyzje architektoniczne | 16 × `accepted`, 3 × `proposed` |
+| `ADR-001` … `ADR-020` | Decyzje architektoniczne | 16 × `accepted`, 3 × `proposed`, 1 × `deprecated` |
 
 ### `security/`, `api/`, `ux/`
 
@@ -128,4 +129,6 @@ Każdy dokument 01–07 zawiera blok **Status dokumentu** określający, w jakim
 
 Konfiguracja laboratorium jest oparta na oficjalnej strukturze Compose v3.0.4, ma przypięte tagi i digesty oraz osobne warianty source/restore i Valkey. OpenAPI i zachowanie runtime zostały pobrane oraz sprawdzone na uruchomionej instancji 3.0.4; wynik nie dziedziczy założeń z 2.x.
 
-**Kodu produkcyjnego nie ma i nie powinno powstać przed zamknięciem M3: Gate OS-1, Gate OS-2-LAB, Gate OS-3-LAB oraz przyjęte rozstrzygnięcia ADR-014, ADR-015 i ADR-016. Pełny Gate OS-2 produktu jest bramą M17, a Gate OS-3-RELEASE — bramą M22.**
+**Stan M9:** zgodnie z 07 §14 fundament inżynieryjny powstał świadomie przed zamknięciem bram M3 i M4, bez kodu domenowego. Zweryfikowano lokalnie (2026-09-11): Core API NestJS z walidacją konfiguracji, logowaniem pino i correlation id; lokalny PostgreSQL 18 w Dockerze (`infra/dev`, uuidv7 potwierdzone); Prisma 7.9.1 ze schematem bez modeli, importowana wyłącznie w `infrastructure/persistence`; liveness i readiness (200/503 bez ujawniania sekretów); 63 testy jednostkowe i 12 integracyjnych z prawdziwą bazą (Testcontainers); Dockerfile, polityka zależności, SBOM i skan sekretów. Zdefiniowano workflow CI (pierwsze uruchomienie po pierwszym pushu) oraz izolowany Compose homelab (`infra/homelab`). Czego nie ma: tabel, modeli i migracji domenowych, branch/release policy poza notą w 07, pełnego katalogu health z 04 §21 — **M9 nie jest zamknięty**. Runbook: [`operations/M9-PostgreSQL-Prisma-CC-Runbook.md`](operations/M9-PostgreSQL-Prisma-CC-Runbook.md).
+
+**Kod domenowy (M10) nadal czeka na M4–M8 oraz na zamknięcie M3: Gate OS-1, Gate OS-2-LAB, Gate OS-3-LAB i przyjęte rozstrzygnięcia ADR-014, ADR-015 i ADR-016. Paperless nie jest połączony z Core, WireGuard (ADR-020) jest planowany, nie skonfigurowany. Pełny Gate OS-2 produktu jest bramą M17, a Gate OS-3-RELEASE — bramą M22.**
